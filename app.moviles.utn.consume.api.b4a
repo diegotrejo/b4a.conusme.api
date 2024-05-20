@@ -1,0 +1,118 @@
+﻿Build1=Default,b4a.example
+File1=Layout.bal
+FileGroup1=Default Group
+Group=Default Group
+Library1=core
+Library2=okhttp
+Library3=okhttputils2
+Library4=xui
+Library5=json
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
+Module1=Departamento
+Module2=Departamentos
+Module3=Starter
+NumberOfFiles=1
+NumberOfLibraries=5
+NumberOfModules=3
+Version=12.8
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: B4A Example
+	#VersionCode: 1
+	#VersionName: 
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: unspecified
+	#CanInstallToExternalStorage: False
+#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: False
+	#IncludeTitle: True
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+	Private xui As XUI
+End Sub
+
+Sub Globals
+	'These global variables will be redeclared each time the activity is created.
+	Private apiDeps As Departamentos
+	Private txtID As EditText
+	Private txtNombre As EditText
+	Private txtCiudad As EditText
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	Activity.LoadLayout("Layout")
+	apiDeps.Initialize("https://appempresautn003.azurewebsites.net/api/Departamentos")
+End Sub
+
+Sub Activity_Resume
+
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
+
+
+
+'Sub Button1_Click
+'	Wait For (apiDeps.Read_All) Complete ( r As List )
+'	If r.Size > 0 Then
+'		For Each d As Departamento In r
+'			Log("-------------------")
+'			Log( d.Id )
+'			Log( d.Nombre )
+'			Log( d.Ciudad )
+'		Next
+'	Else
+'		Msgbox("no hay datos", "Error")
+'	End If
+'	
+'End Sub
+'
+
+
+Private Sub cmdDelete_Click
+	Wait For (apiDeps.Delete( txtID.Text )) Complete ( r As Boolean )
+	If r = True Then
+		txtID.Text = ""
+		txtNombre.Text = ""
+		txtCiudad.Text = ""
+		Msgbox("registro borrado !!", "Ok")
+	Else
+		Msgbox("no hay datos", "Error")
+	End If
+End Sub
+
+Private Sub cmdUpdate_Click
+	Wait For (apiDeps.Update( txtID.Text , txtNombre.Text, txtCiudad.Text)) Complete ( r As Boolean )
+	If r = True Then
+		Msgbox("registro actualizado !!", "Ok")
+	Else
+		Msgbox("no hay datos", "Error")
+	End If
+End Sub
+
+Private Sub cmdRead_Click
+	Wait For (apiDeps.Read_ById( txtID.Text )) Complete ( d As Departamento )
+	If d.Id > 0 Then
+		txtNombre.Text = d.Nombre
+		txtCiudad.Text = d.Ciudad
+	Else
+		Msgbox("no hay datos", "Error")
+	End If
+End Sub
+
+Private Sub cmdCreate_Click
+	Wait For (apiDeps.Create( 0, txtNombre.Text, txtCiudad.Text)) Complete ( d As Departamento )
+	If d.Id > 0 Then
+		txtID.Text = d.Id
+		Msgbox("Insertado el registro", "OK")
+	Else
+		Msgbox("No se pudo insertar el registro", "Error")
+	End If
+End Sub
